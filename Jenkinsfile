@@ -6,7 +6,7 @@ pipeline {
         APP_NAME        = 'springboot-cicd-demo'
         DOCKER_IMAGE    = "your-dockerhub-username/${APP_NAME}"
         DOCKER_TAG      = "${BUILD_NUMBER}"                    // Jenkins build number as tag
-        JAVA_HOME       = tool 'JDK17'                        // Jenkins Global Tool name
+        JAVA_HOME       = tool 'JDK21'                        // Jenkins Global Tool name
         SONAR_PROJECT   = 'springboot-cicd-demo'
     }
 
@@ -247,8 +247,9 @@ pipeline {
         }
         always {
             echo "🧹 Cleaning up workspace..."
-            // Remove dangling Docker images to save disk space
-            sh 'docker image prune -f || true'
+            script {
+                sh 'docker image prune -f || true'
+            }
             cleanWs()
         }
     }
