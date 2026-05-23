@@ -13,7 +13,7 @@ pipeline {
     // ── Tool Versions ───────────────────────────────────────────────────────
     tools {
         maven 'Maven3'      // Must match name configured in Jenkins > Global Tool Config
-        jdk   'JDK17'
+        jdk   'JDK21'
     }
 
     // ── Pipeline Options ────────────────────────────────────────────────────
