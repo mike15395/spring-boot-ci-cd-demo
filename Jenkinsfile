@@ -146,7 +146,7 @@ pipeline {
             steps {
                 echo "📤 Pushing Docker image to registry..."
                 withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-credentials',  // Jenkins credential ID
+                    credentialsId: 'my-docker-hub-cred',  // Jenkins credential ID
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
