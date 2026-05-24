@@ -187,7 +187,7 @@ pipeline {
                 echo "💨 Running smoke test on staging..."
                 retry(3) {
                     sh '''
-                        STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8081/api/health)
+                        STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/api/health)
                         if [ "$STATUS" != "200" ]; then
                             echo "❌ Smoke test failed! HTTP status: $STATUS"
                             exit 1
