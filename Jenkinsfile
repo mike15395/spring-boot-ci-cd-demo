@@ -4,7 +4,7 @@ pipeline {
     // ── Environment Variables ───────────────────────────────────────────────
     environment {
         APP_NAME        = 'springboot-cicd-demo'
-        DOCKER_IMAGE    = "your-dockerhub-username/${APP_NAME}"
+        DOCKER_IMAGE    = "mikhildesai/${APP_NAME}"
         DOCKER_TAG      = "${BUILD_NUMBER}"                    // Jenkins build number as tag
         JAVA_HOME       = tool 'JDK21'                        // Jenkins Global Tool name
         SONAR_PROJECT   = 'springboot-cicd-demo'
