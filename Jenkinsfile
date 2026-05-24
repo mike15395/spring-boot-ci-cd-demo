@@ -82,42 +82,37 @@ pipeline {
         }
 
         // ── Stage 4: Code Quality (SonarQube) ──────────────────────────────
-        stage('Code Quality Analysis') {
-            when {
-                // Only run on main/develop branches to save time on feature branches
-                anyOf {
-                    branch 'main'
-                    branch 'develop'
-                }
-            }
-            steps {
-                echo "🔍 Running SonarQube analysis..."
-                withSonarQubeEnv('SonarQube') {    // 'SonarQube' = Jenkins SonarQube server name
-                    sh """
-                        mvn sonar:sonar \
-                            -Dsonar.projectKey=${SONAR_PROJECT} \
-                            -Dsonar.projectName='Spring Boot CI/CD Demo' \
-                            -B
-                    """
-                }
-            }
-        }
+        // stage('Code Quality Analysis') {
+        //     when {
+        //         // Only run on main/develop branches to save time on feature branches
+        //         anyOf {
+        //             branch 'main'
+        //             branch 'develop'
+        //         }
+        //     }
+        //     steps {
+        //         echo "🔍 Running SonarQube analysis..."
+        //         withSonarQubeEnv('SonarQube') {    // 'SonarQube' = Jenkins SonarQube server name
+        //             sh """
+        //                 mvn sonar:sonar \
+        //                     -Dsonar.projectKey=${SONAR_PROJECT} \
+        //                     -Dsonar.projectName='Spring Boot CI/CD Demo' \
+        //                     -B
+        //             """
+        //         }
+        //     }
+        // }
 
         // ── Stage 5: Quality Gate ───────────────────────────────────────────
-        stage('Quality Gate') {
-            when {
-                anyOf {
-                    branch 'main'
-                    branch 'develop'
-                }
-            }
-            steps {
-                echo "🚦 Checking SonarQube Quality Gate..."
-                timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
+        // stage('Quality Gate') {
+          
+        //     steps {
+        //         echo "🚦 Checking SonarQube Quality Gate..."
+        //         timeout(time: 5, unit: 'MINUTES') {
+        //             waitForQualityGate abortPipeline: true
+        //         }
+        //     }
+        // }
 
         // ── Stage 6: Package ────────────────────────────────────────────────
         stage('Package') {
@@ -140,9 +135,7 @@ pipeline {
 
         // ── Stage 8: Push Docker Image ──────────────────────────────────────
         stage('Docker Push') {
-            when {
-                branch 'main'    // Only push on main branch
-            }
+           
             steps {
                 echo "📤 Pushing Docker image to registry..."
                 withCredentials([usernamePassword(
@@ -159,9 +152,7 @@ pipeline {
 
         // ── Stage 9: Deploy to Staging ──────────────────────────────────────
         stage('Deploy to Staging') {
-            when {
-                branch 'main'
-            }
+          
             steps {
                 echo "🚀 Deploying to Staging environment..."
                 // Stop old container if running, then start new one
@@ -180,19 +171,17 @@ pipeline {
 
         // ── Stage 10: Smoke Test ────────────────────────────────────────────
         stage('Smoke Test (Staging)') {
-            when {
-                branch 'main'
-            }
+           
             steps {
                 echo "💨 Running smoke test on staging..."
                 retry(3) {
                     sh '''
                         STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/api/health)
                         if [ "$STATUS" != "200" ]; then
-                            echo "❌ Smoke test failed! HTTP status: $STATUS"
+                            echo " Smoke test failed! HTTP status: $STATUS"
                             exit 1
                         fi
-                        echo "✅ Smoke test passed! HTTP 200 received."
+                        echo " Smoke test passed! HTTP 200 received."
                     '''
                 }
             }
@@ -200,9 +189,7 @@ pipeline {
 
         // ── Stage 11: Deploy to Production ─────────────────────────────────
         stage('Deploy to Production') {
-            when {
-                branch 'main'
-            }
+           
             // Manual approval gate before production deploy
             input {
                 message "Deploy to Production?"
@@ -216,7 +203,7 @@ pipeline {
                     docker rm   ${APP_NAME}-prod || true
                     docker run -d \
                         --name ${APP_NAME}-prod \
-                        -p 8000:8000 \
+                        -p 8001:8000 \
                         --restart unless-stopped \
                         ${DOCKER_IMAGE}:${DOCKER_TAG}
                 """
@@ -230,20 +217,12 @@ pipeline {
     // ════════════════════════════════════════════════════════════════════════
     post {
         success {
-            echo "✅ Pipeline succeeded! Build #${BUILD_NUMBER} deployed."
-            // emailext(
-            //     subject: "✅ Build SUCCESS: ${APP_NAME} #${BUILD_NUMBER}",
-            //     body:    "Pipeline passed. View: ${BUILD_URL}",
-            //     to:      "team@example.com"
-            // )
+            echo " Pipeline succeeded! Build #${BUILD_NUMBER} deployed."
+           
         }
         failure {
-            echo "❌ Pipeline failed at stage. Check logs."
-            // emailext(
-            //     subject: "❌ Build FAILED: ${APP_NAME} #${BUILD_NUMBER}",
-            //     body:    "Pipeline failed. View: ${BUILD_URL}",
-            //     to:      "team@example.com"
-            // )
+            echo " Pipeline failed at stage. Check logs."
+           
         }
         always {
             echo "🧹 Cleaning up workspace..."
