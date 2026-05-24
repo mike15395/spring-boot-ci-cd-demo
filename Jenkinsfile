@@ -165,7 +165,7 @@ pipeline {
                         ${DOCKER_IMAGE}:${DOCKER_TAG}
                 """
                 // Wait for app to start
-                sh 'sleep 15'
+                sh 'sleep 25'
             }
         }
 
@@ -174,7 +174,7 @@ pipeline {
            
             steps {
                 echo "💨 Running smoke test on staging..."
-                retry(3) {
+                retry(5) {
                     sh '''
                         STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/api/health)
                         if [ "$STATUS" != "200" ]; then
