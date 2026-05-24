@@ -170,7 +170,7 @@ pipeline {
                     docker rm   ${APP_NAME}-staging || true
                     docker run -d \
                         --name ${APP_NAME}-staging \
-                        -p 8081:8080 \
+                        -p 8000:8000 \
                         ${DOCKER_IMAGE}:${DOCKER_TAG}
                 """
                 // Wait for app to start
@@ -216,7 +216,7 @@ pipeline {
                     docker rm   ${APP_NAME}-prod || true
                     docker run -d \
                         --name ${APP_NAME}-prod \
-                        -p 8080:8080 \
+                        -p 8000:8000 \
                         --restart unless-stopped \
                         ${DOCKER_IMAGE}:${DOCKER_TAG}
                 """
